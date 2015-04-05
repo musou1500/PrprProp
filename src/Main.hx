@@ -1,0 +1,101 @@
+package ;
+
+import flash.display.Sprite;
+import flash.events.Event;
+import flash.Lib;
+import openfl.events.TimerEvent;
+import openfl.geom.Point;
+import openfl.geom.Vector3D;
+import openfl.display.BlendMode;
+import openfl.utils.Timer;
+/**
+ * ...
+ * @author musou1500
+ */
+
+class Main extends Sprite 
+{
+	var inited:Bool;
+	var springs:Array<Spring>;
+	var apples:Array<FallenApple>;
+
+	/* ENTRY POINT */
+	
+	function resize(e) 
+	{
+		if (!inited) init();
+		// else (resize or orientation change)
+	}
+	var points:Array<SpringPoint>;
+	function init() 
+	{
+		if (inited) return;
+		inited = true;
+		this.stage.blendMode = BlendMode.LAYER;
+		// 正五角形の頂点を生成
+		//45D5FE
+		var colors = [0x45D5FE, 0xff3a7d];
+		this.apples = new Array<FallenApple>();
+		/*
+		for (i in 0...5)
+		{
+			var idx = Std.random(2);
+			var apple = new FallenApple(colors[idx], FallenApple.genRandomPoints(100, 0.7));
+			this.stage.addChild(apple);
+			apple.x = Std.random(400);
+			apple.springs[0].source.applyForce(new Vector3D(2*Math.random()*2, 20*Math.random()*2, 0));
+			this.apples.push(apple);
+		}*/
+		var timer = new Timer(6000);
+		timer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent) {
+			var idx = Std.random(2);
+			var apple = new FallenApple(colors[idx], FallenApple.genRandomPoints(100, 0.7));
+			this.stage.addChild(apple);
+			apple.x = this.stage.stageWidth / 2 + Std.random(400) - 200;
+			apple.y = -150;
+			apple.springs[0].source.applyForce(new Vector3D(200*Math.random() - 100, 40*Math.random() - 20, 0));
+			this.apples.push(apple);
+		});
+		timer.start();
+		
+		this.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		// Stage:
+		// stage.stageWidth x stage.stageHeight @ stage.dpiScale
+		
+		// Assets:
+		// nme.Assets.getBitmapData("img/assetname.jpg");
+	}
+	public function onEnterFrame(e:Event)
+	{
+		for (apple in this.apples)
+		{
+			apple.update();
+		}
+	}
+	/* SETUP */
+
+	public function new() 
+	{
+		super();	
+		addEventListener(Event.ADDED_TO_STAGE, added);
+	}
+
+	function added(e) 
+	{
+		removeEventListener(Event.ADDED_TO_STAGE, added);
+		stage.addEventListener(Event.RESIZE, resize);
+		#if ios
+		haxe.Timer.delay(init, 100); // iOS 6
+		#else
+		init();
+		#end
+	}
+	
+	public static function main() 
+	{
+		// static entry point
+		Lib.current.stage.align = flash.display.StageAlign.TOP_LEFT;
+		Lib.current.stage.scaleMode = flash.display.StageScaleMode.NO_SCALE;
+		Lib.current.addChild(new Main());
+	}
+}
