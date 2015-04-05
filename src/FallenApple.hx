@@ -35,16 +35,16 @@ class FallenApple extends Sprite
 			if (i == 4) {
 				distinationIdx = 0;
 			}
-			var spring = new Spring(0.1, this.points[i], this.points[distinationIdx]);
+			var spring = new Spring(0.5, this.points[i], this.points[distinationIdx]);
 			this.springs.push(spring);
 			
-			var spring2 = new Spring(0.1, centerPoint, points[i]);
+			var spring2 = new Spring(0.5, centerPoint, points[i]);
 			this.springs.push(spring2);
 		}
 	}
 	public function update()
 	{
-		this.y += 0.5;
+		this.y += 1.5;
 		this.graphics.clear();
 		for (spring in this.springs)
 		{
