@@ -13,6 +13,20 @@ class FallenApple extends Sprite
 	public var points:Array<SpringPoint>;
 	// 0x526ed7 or 0xff3a7d
 	public var color:UInt;
+	public var speedX:Float = 0;
+	public var speedY:Float = 0;
+	
+	// y座標が最小のポイント
+	public var topPoint:Point = new Point(0, 0);
+	
+	// x座標が最小のポイント
+	public var leftPoint:Point = new Point(0, 0);
+	
+	// x座標が最大のポイント
+	public var rightPoint:Point = new Point(0, 0);
+	
+
+	
 	public function new(color:UInt, initPoints:Array<Point>)
 	{
 		super();
@@ -44,15 +58,44 @@ class FallenApple extends Sprite
 	}
 	public function update()
 	{
-		this.y += 1.5;
 		this.graphics.clear();
 		for (spring in this.springs)
 		{
 			spring.update();
 		}
+		
+		this.leftPoint = new Point(this.springs[0].source.x, this.springs[0].source.y); 
+		this.rightPoint = new Point(this.springs[0].source.x, this.springs[0].source.y); 
+		this.topPoint = new Point(this.springs[0].source.x, this.springs[0].source.y); 
 		for (spring in this.springs)
 		{
 			spring.updateSpeed();
+			spring.source.x += this.speedX;
+			spring.distination.y += this.speedY;
+			
+			// leftPointの更新
+			if (spring.source.x < this.leftPoint.x) {
+				this.leftPoint.setTo(spring.source.x, spring.source.y);
+			}
+			if (spring.distination.x < this.leftPoint.x) {
+				this.leftPoint.setTo(spring.distination.x, spring.distination.y);
+			}
+			
+			// rightPointの更新
+			if (spring.source.x > this.rightPoint.x) {
+				this.rightPoint.setTo(spring.source.x, spring.source.y);
+			}
+			if (spring.distination.x > this.rightPoint.x) {
+				this.rightPoint.setTo(spring.distination.x, spring.distination.y);
+			}
+			
+			// topPointの更新
+			if (spring.source.y < this.topPoint.y) {
+				this.topPoint.setTo(spring.source.x, spring.source.y);
+			}
+			if (spring.distination.y < this.topPoint.y) {
+				this.topPoint.setTo(spring.distination.x, spring.distination.y);
+			}
 		}
 		// 0x526ed7
 		this.graphics.beginFill(this.color, 1.0);

@@ -60,32 +60,9 @@ class Spring extends Sprite
 		powOfSourceSpring.scaleBy( -1);
 		this.source.strength = this.source.strength.add(powOfSourceSpring);
 		this.distination.strength = this.distination.strength.add(this.powOfSpring);
-		
-		// sourceの加速度ベクトルを計算(f=ma) a=f/m
-		/*
-		this.source.acceleration = this.source.strength.clone();
-		this.source.acceleration.scaleBy(1 / this.source.weight);
-		
-		// sourceのスピードを更新
-		//this.source.speed = this.source.speed.add(this.source.acceleration);
-		this.source.speed = this.source.speed.add(this.source.acceleration);
-		
-		// distinationの加速度ベクトルを計算(f=ma) a=f/m
-		this.distination.acceleration = this.distination.strength.clone();
-		this.distination.acceleration.scaleBy(1 / this.distination.weight);
-		
-		// distinationのスピードを更新
-		//this.distination.speed = this.distination.speed.add(this.distination.acceleration);
-		this.distination.speed = this.distination.speed.add(this.distination.acceleration);
-		// sourceの位置を更新
-		// 座標の更新は全ての力を求め終わってから
-		// this.source.add(this.source.speed);
-		*/
 	}
 	public function updateSpeed()
 	{
-		/*this.source.add(this.source.speed);
-		this.distination.add(this.distination.speed);*/
 		this.source.updateSpeed();
 		this.distination.updateSpeed();
 	}

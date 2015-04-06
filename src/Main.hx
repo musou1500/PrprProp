@@ -3,6 +3,8 @@ package ;
 import flash.display.Sprite;
 import flash.events.Event;
 import flash.Lib;
+import openfl.display.FPS;
+import openfl.events.MouseEvent;
 import openfl.events.TimerEvent;
 import openfl.geom.Point;
 import openfl.geom.Vector3D;
@@ -55,12 +57,22 @@ class Main extends Sprite
 		});
 		timer.start();
 		
+		this.stage.addChild(new FPS());
 		this.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
+		this.stage.addEventListener(MouseEvent.CLICK, onClick);
 		// Stage:
 		// stage.stageWidth x stage.stageHeight @ stage.dpiScale
 		
 		// Assets:
 		// nme.Assets.getBitmapData("img/assetname.jpg");
+	}
+	
+	public function onClick(e:MouseEvent)
+	{
+		for (apple in this.apples) {
+			var strength = 700 * Math.random() - 350;
+			apple.springs[0].source.applyForce(new Vector3D(strength, 0, 0));
+		}
 	}
 	public function generateApple(color:Int)
 	{
@@ -70,6 +82,7 @@ class Main extends Sprite
 		this.stage.addChild(apple);
 		apple.x = this.stage.stageWidth / 2;
 		apple.y = 0 - r - 80;
+		apple.speedY = 1.5;
 		apple.springs[0].source.applyForce(new Vector3D(700*Math.random() - 350, 40*Math.random() - 20, 0));
 		this.apples.push(apple);
 		
@@ -83,9 +96,27 @@ class Main extends Sprite
 	
 	public function onEnterFrame(e:Event)
 	{
+		var removedApples = new Array<FallenApple>();
 		for (apple in this.apples)
 		{
+			// もしも画面外なら削除する
+			
+			if (apple.topPoint.y + apple.y > this.stage.stageHeight) {
+				//this.stage.removeChild(apple);
+				removedApples.push(apple);
+			} else if (apple.rightPoint.x + apple.x < 0) {
+				//this.stage.removeChild(apple);
+				removedApples.push(apple);
+			} else if (apple.leftPoint.x + apple.x > this.stage.stageWidth) {
+				//this.stage.removeChild(apple);
+				removedApples.push(apple);
+			}
 			apple.update();
+		}
+		for (apple in removedApples) {
+			this.apples.remove(apple);
+			this.stage.removeChild(apple);
+			trace("removed");
 		}
 	}
 	/* SETUP */

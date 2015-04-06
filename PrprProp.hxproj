@@ -16,15 +16,15 @@
   </output>
   <!-- Other classes to be compiled into your SWF -->
   <classpaths>
-    <class path="D:\Apps\HaxeToolkit\haxe\lib\openfl\git" />
-    <class path="D:\Apps\HaxeToolkit\haxe\lib\lime\2,3,0" />
-    <class path="D:\Apps\HaxeToolkit\haxe\lib\actuate\1,8,3" />
+    <class path="C:\HaxeToolkit\haxe\lib\openfl\2,2,7" />
+    <class path="C:\HaxeToolkit\haxe\lib\lime\2,1,2" />
+    <class path="C:\HaxeToolkit\haxe\lib\actuate\1,8,2" />
     <class path="src" />
-    <class path="bin\windows\neko\haxe" />
+    <class path="bin\windows\cpp\haxe" />
   </classpaths>
   <!-- Build options -->
   <build>
-    <option directives="openfl=2.2.4&#xA;lime=2.3.0&#xA;actuate=1.8.3&#xA;tools=2.3.0&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop" />
+    <option directives="openfl=2.2.7&#xA;lime=2.1.2&#xA;actuate=1.8.2&#xA;tools=2.1.2&#xA;no-compilation&#xA;native&#xA;lime-native&#xA;openfl-native&#xA;windows&#xA;desktop" />
     <option flashStrict="False" />
     <option noInlineOnDebug="False" />
     <option mainClass="ApplicationMain" />
