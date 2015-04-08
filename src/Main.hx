@@ -20,6 +20,8 @@ class Main extends Sprite
 	var inited:Bool;
 	var springs:Array<Spring>;
 	var apples:Array<FallenApple>;
+	var generators:Array<AppleGenerator>;
+	var points:Array<SpringPoint>;
 
 	/* ENTRY POINT */
 	
@@ -28,7 +30,7 @@ class Main extends Sprite
 		if (!inited) init();
 		// else (resize or orientation change)
 	}
-	var points:Array<SpringPoint>;
+	
 	function init() 
 	{
 		if (inited) return;
@@ -38,17 +40,8 @@ class Main extends Sprite
 		//45D5FE
 		var colors = [0x45D5FE, 0xff3a7d];
 		this.apples = new Array<FallenApple>();
-		/*
-		for (i in 0...5)
-		{
-			var idx = Std.random(2);
-			var apple = new FallenApple(colors[idx], FallenApple.genRandomPoints(100, 0.7));
-			this.stage.addChild(apple);
-			apple.x = Std.random(400);
-			apple.springs[0].source.applyForce(new Vector3D(2*Math.random()*2, 20*Math.random()*2, 0));
-			this.apples.push(apple);
-		}*/
-
+		
+		
 		this.generateApple(0x45D5FE);
 		// 10秒を基準に2秒前後
 		var timer = new Timer(7500, 1);
@@ -59,7 +52,6 @@ class Main extends Sprite
 		
 		this.stage.addChild(new FPS());
 		this.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
-		this.stage.addEventListener(MouseEvent.CLICK, onClick);
 		// Stage:
 		// stage.stageWidth x stage.stageHeight @ stage.dpiScale
 		
@@ -67,23 +59,17 @@ class Main extends Sprite
 		// nme.Assets.getBitmapData("img/assetname.jpg");
 	}
 	
-	public function onClick(e:MouseEvent)
-	{
-		for (apple in this.apples) {
-			var strength = 700 * Math.random() - 350;
-			apple.springs[0].source.applyForce(new Vector3D(strength, 0, 0));
-		}
-	}
+
 	public function generateApple(color:Int)
 	{
 		// 最大300 最低80
 		var r = 220 - Std.random(140);
-		var apple = new FallenApple(color, FallenApple.genRandomPoints(r, 0.7));
+		var apple = new FallenApple(color, FallenApple.genRandomPoints(5, r, 0.7));
 		this.stage.addChild(apple);
 		apple.x = this.stage.stageWidth / 2;
 		apple.y = 0 - r - 80;
 		apple.speedY = 1.5;
-		apple.springs[0].source.applyForce(new Vector3D(700*Math.random() - 350, 40*Math.random() - 20, 0));
+		apple.springs[0].source.applyForce(new Vector3D(500*Math.random() - 250, 20*Math.random() - 10, 0));
 		this.apples.push(apple);
 		
 		var next:Float = 15000 + Math.random() * 4000 - 2000;
@@ -94,29 +80,26 @@ class Main extends Sprite
 		timer.start();
 	}
 	
+	var removedNum:Int = 0;
 	public function onEnterFrame(e:Event)
 	{
 		var removedApples = new Array<FallenApple>();
 		for (apple in this.apples)
 		{
 			// もしも画面外なら削除する
-			
 			if (apple.topPoint.y + apple.y > this.stage.stageHeight) {
-				//this.stage.removeChild(apple);
-				removedApples.push(apple);
-			} else if (apple.rightPoint.x + apple.x < 0) {
-				//this.stage.removeChild(apple);
-				removedApples.push(apple);
-			} else if (apple.leftPoint.x + apple.x > this.stage.stageWidth) {
 				//this.stage.removeChild(apple);
 				removedApples.push(apple);
 			}
 			apple.update();
 		}
+		if(removedApples.length > 0) {
+			this.removedNum += removedApples.length;
+			trace("removedNum:"+this.removedNum);
+		}
 		for (apple in removedApples) {
 			this.apples.remove(apple);
 			this.stage.removeChild(apple);
-			trace("removed");
 		}
 	}
 	/* SETUP */

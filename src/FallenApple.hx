@@ -15,17 +15,10 @@ class FallenApple extends Sprite
 	public var color:UInt;
 	public var speedX:Float = 0;
 	public var speedY:Float = 0;
+	public var numOfVertices:Int;
 	
 	// y座標が最小のポイント
 	public var topPoint:Point = new Point(0, 0);
-	
-	// x座標が最小のポイント
-	public var leftPoint:Point = new Point(0, 0);
-	
-	// x座標が最大のポイント
-	public var rightPoint:Point = new Point(0, 0);
-	
-
 	
 	public function new(color:UInt, initPoints:Array<Point>)
 	{
@@ -40,13 +33,14 @@ class FallenApple extends Sprite
 			centerPoint.x += point.x;
 			centerPoint.y += point.y;
 		}
-		centerPoint.x = centerPoint.x / 5;
-		centerPoint.y = centerPoint.y / 5;
+		this.numOfVertices = initPoints.length;
+		centerPoint.x = centerPoint.x / this.numOfVertices;
+		centerPoint.y = centerPoint.y / this.numOfVertices;
 		
 		this.springs = new Array<Spring>();
-		for (i in 0...5) {
+		for (i in 0...this.numOfVertices) {
 			var distinationIdx = i + 1;
-			if (i == 4) {
+			if (i == this.numOfVertices - 1) {
 				distinationIdx = 0;
 			}
 			var spring = new Spring(0.5, this.points[i], this.points[distinationIdx]);
@@ -64,8 +58,6 @@ class FallenApple extends Sprite
 			spring.update();
 		}
 		
-		this.leftPoint = new Point(this.springs[0].source.x, this.springs[0].source.y); 
-		this.rightPoint = new Point(this.springs[0].source.x, this.springs[0].source.y); 
 		this.topPoint = new Point(this.springs[0].source.x, this.springs[0].source.y); 
 		for (spring in this.springs)
 		{
@@ -73,22 +65,7 @@ class FallenApple extends Sprite
 			spring.source.x += this.speedX;
 			spring.distination.y += this.speedY;
 			
-			// leftPointの更新
-			if (spring.source.x < this.leftPoint.x) {
-				this.leftPoint.setTo(spring.source.x, spring.source.y);
-			}
-			if (spring.distination.x < this.leftPoint.x) {
-				this.leftPoint.setTo(spring.distination.x, spring.distination.y);
-			}
-			
-			// rightPointの更新
-			if (spring.source.x > this.rightPoint.x) {
-				this.rightPoint.setTo(spring.source.x, spring.source.y);
-			}
-			if (spring.distination.x > this.rightPoint.x) {
-				this.rightPoint.setTo(spring.distination.x, spring.distination.y);
-			}
-			
+
 			// topPointの更新
 			if (spring.source.y < this.topPoint.y) {
 				this.topPoint.setTo(spring.source.x, spring.source.y);
@@ -106,10 +83,10 @@ class FallenApple extends Sprite
 		
 		// 最後のセットに新しい中間点を追加する必要はないので2つ分の点を引いておく
 		//for (var i:int = 1; i < POINT_NUM - 2; i++)
-		for (i in 1...5)
+		for (i in 1...this.numOfVertices)
 		{
 			var cp:Point;
-			if (i == 4)
+			if (i == this.numOfVertices - 1)
 			{
 				cp = new Point((this.points[i].x + this.points[0].x) / 2, (this.points[i].y + this.points[0].y) / 2);
 			}
@@ -125,18 +102,26 @@ class FallenApple extends Sprite
 			(this.points[0].y + this.points[1].y) / 2
 		);
 		this.graphics.endFill();
+		/*
+		this.graphics.lineStyle(0.3, 0x000000);
+		for (spring in this.springs)
+		{
+			this.graphics.moveTo(spring.source.x, spring.source.y);
+			this.graphics.lineTo(spring.distination.x, spring.distination.y);
+		}*/
 	}
 	/*
-	 * @r 半径
-	 * @circlenum 円っぽさ
+	 * @param numOfVertices 頂点の数
+	 * @param r 半径
+	 * @param circlenum 円っぽさ
 	 * */
-	public static function genRandomPoints(r:Int, circleNum:Float)
+	public static function genRandomPoints(numOfVertices:Int, r:Int, circleNum:Float)
 	{
 		// 五角形の各頂点を生成
 		var points = new Array<Point>();
-		for (i in 0...5)
+		for (i in 0...numOfVertices)
 		{
-			var degree = i * 360 / 5;
+			var degree = i * 360 / numOfVertices;
 			var tx:Float = (Math.random() * circleNum + 1) * Math.cos(degree * Math.PI / 180) * r;
 			var ty:Float = (Math.random() * circleNum + 1) * Math.sin(degree * Math.PI / 180) * r;
 			points.push(new Point(tx, ty));
