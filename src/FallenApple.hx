@@ -11,10 +11,10 @@ class FallenApple extends Sprite
 {
 	public var springs:Array<Spring>;
 	public var points:Array<SpringPoint>;
+	public var speedX:Float;
+	public var speedY:Float;
 	// 0x526ed7 or 0xff3a7d
 	public var color:UInt;
-	public var speedX:Float = 0;
-	public var speedY:Float = 0;
 	public var numOfVertices:Int;
 	
 	// y座標が最小のポイント
@@ -26,7 +26,7 @@ class FallenApple extends Sprite
 		this.blendMode = BlendMode.MULTIPLY;
 		this.color = color;
 		this.points = new Array<SpringPoint>();
-		var centerPoint:SpringPoint = new SpringPoint(0, 0, 900);
+		var centerPoint:SpringPoint = new SpringPoint(0, 0, 99999);
 		for (point in initPoints)
 		{
 			this.points.push(new SpringPoint(point.x, point.y, 120));
@@ -62,8 +62,6 @@ class FallenApple extends Sprite
 		for (spring in this.springs)
 		{
 			spring.updateSpeed();
-			spring.source.x += this.speedX;
-			spring.distination.y += this.speedY;
 			
 
 			// topPointの更新
@@ -74,6 +72,8 @@ class FallenApple extends Sprite
 				this.topPoint.setTo(spring.distination.x, spring.distination.y);
 			}
 		}
+		this.x += this.speedX;
+		this.y += this.speedY;
 		// 0x526ed7
 		this.graphics.beginFill(this.color, 1.0);
 		this.graphics.moveTo(
@@ -102,6 +102,7 @@ class FallenApple extends Sprite
 			(this.points[0].y + this.points[1].y) / 2
 		);
 		this.graphics.endFill();
+		
 		/*
 		this.graphics.lineStyle(0.3, 0x000000);
 		for (spring in this.springs)
@@ -115,16 +116,17 @@ class FallenApple extends Sprite
 	 * @param r 半径
 	 * @param circlenum 円っぽさ
 	 * */
-	public static function genRandomPoints(numOfVertices:Int, r:Int, circleNum:Float)
+	public static function genRandomPoints(numOfVertices:Int, r:Int)
 	{
 		// 五角形の各頂点を生成
 		var points = new Array<Point>();
 		for (i in 0...numOfVertices)
 		{
 			var degree = i * 360 / numOfVertices;
-			var tx:Float = (Math.random() * circleNum + 1) * Math.cos(degree * Math.PI / 180) * r;
-			var ty:Float = (Math.random() * circleNum + 1) * Math.sin(degree * Math.PI / 180) * r;
-			points.push(new Point(tx, ty));
+			var scale = 1 - Math.random() / 3;
+			var tx:Float = Math.cos(degree * Math.PI / 180) * r;
+			var ty:Float = Math.sin(degree * Math.PI / 180) * r;
+			points.push(new Point(scale * tx, scale * ty));
 		}
 		return points;
 	}

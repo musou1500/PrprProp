@@ -18,7 +18,6 @@ import openfl.utils.Timer;
 class Main extends Sprite 
 {
 	var inited:Bool;
-	var springs:Array<Spring>;
 	var apples:Array<FallenApple>;
 	var generators:Array<AppleGenerator>;
 	var points:Array<SpringPoint>;
@@ -36,20 +35,60 @@ class Main extends Sprite
 		if (inited) return;
 		inited = true;
 		this.stage.blendMode = BlendMode.LAYER;
-		// 正五角形の頂点を生成
-		//45D5FE
-		var colors = [0x45D5FE, 0xff3a7d];
+		this.generators = new Array<AppleGenerator>();
 		this.apples = new Array<FallenApple>();
-		
-		
-		this.generateApple(0x45D5FE);
-		// 10秒を基準に2秒前後
-		var timer = new Timer(7500, 1);
-		timer.addEventListener(TimerEvent.TIMER, function(e:Event) {
-			this.generateApple(0xff3a7d);
-		});
-		timer.start();
-		
+		/*
+		 * 各モードでのカラーコード
+		 * Normal          : 0x45D5FE, 0xff3a7d
+		 * AREANA MODE     : 0x73FFE4, 0xFFED00
+		 * COURCE MODE     : 0xFF31AD, 0x7400BD
+		 * UNLOCK Challenge: 0xFF4900
+		 **/
+		var colors = [0x45D5FE, 0xff3A7D];
+		for( i in 0...colors.length ){
+			var color = colors[i];
+			// 上から落とすタイプのジェネレータ
+			var topCenter = new Point(this.stage.stageWidth / 2, 0);
+			var generator = new AppleGenerator(topCenter, color, 15000);
+			generator.addEventListener(AppleGeneratorEvent.APPLE_GENERATE, function(e:AppleGeneratorEvent) {
+				var apple = e.apple;
+				apple.x = this.stage.stageWidth / 2;
+				apple.y = 0 - e.radius;
+				apple.speedX = 0.5 - (i % 2 * 1);
+				apple.speedY = 1.5;
+				apple.springs[0].source.applyForce(new Vector3D(500*Math.random() - 250, 20*Math.random() - 10, 0));
+				this.apples.push(apple);
+				this.stage.addChild(apple);
+			});
+			generator.start();
+			this.generators.push(generator);
+
+			// 横から流す感じのジェネレータ
+			var sidePoint:Point = new Point(0, 100);
+			if (i % 2 == 1) {
+				sidePoint.x = this.stage.stageWidth;
+			}
+			var subGenerator = new AppleGenerator(sidePoint, color, 15000);
+			subGenerator.addEventListener(AppleGeneratorEvent.APPLE_GENERATE, function(e:AppleGeneratorEvent) {
+				var apple = e.apple;
+				apple.y = subGenerator.point.y;
+				if (i % 2 == 0) {
+					apple.x = 0 - e.radius;
+					apple.speedX = 1;
+				} else {
+					apple.x = this.stage.stageWidth + e.radius;
+					apple.speedX = 0 - 1;
+				}
+
+				apple.speedY = 1.0;
+				apple.springs[0].source.applyForce(new Vector3D(500*Math.random() - 250, 20*Math.random() - 10, 0));
+				this.apples.push(apple);
+				this.stage.addChild(apple);
+			});
+			subGenerator.start();
+			this.generators.push(subGenerator);
+		}
+
 		this.stage.addChild(new FPS());
 		this.stage.addEventListener(Event.ENTER_FRAME, onEnterFrame);
 		// Stage:
@@ -57,27 +96,6 @@ class Main extends Sprite
 		
 		// Assets:
 		// nme.Assets.getBitmapData("img/assetname.jpg");
-	}
-	
-
-	public function generateApple(color:Int)
-	{
-		// 最大300 最低80
-		var r = 220 - Std.random(140);
-		var apple = new FallenApple(color, FallenApple.genRandomPoints(5, r, 0.7));
-		this.stage.addChild(apple);
-		apple.x = this.stage.stageWidth / 2;
-		apple.y = 0 - r - 80;
-		apple.speedY = 1.5;
-		apple.springs[0].source.applyForce(new Vector3D(500*Math.random() - 250, 20*Math.random() - 10, 0));
-		this.apples.push(apple);
-		
-		var next:Float = 15000 + Math.random() * 4000 - 2000;
-		var timer = new Timer(next, 1);
-		timer.addEventListener(TimerEvent.TIMER, function(e:Event) {
-			this.generateApple(color);
-		});
-		timer.start();
 	}
 	
 	var removedNum:Int = 0;
@@ -95,7 +113,6 @@ class Main extends Sprite
 		}
 		if(removedApples.length > 0) {
 			this.removedNum += removedApples.length;
-			trace("removedNum:"+this.removedNum);
 		}
 		for (apple in removedApples) {
 			this.apples.remove(apple);
