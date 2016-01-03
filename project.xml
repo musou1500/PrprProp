@@ -5,6 +5,7 @@
 	<!-- metadata, make sure 'package' is at least 3 segments (ie. com.mycompany.myproject) -->
 	<meta title="PrprProp" package="PrprProp" version="1.0.0" company="musou1500" />
 	
+	<set name="legacy" />
 	<!-- output -->
 	<app main="Main" file="PrprProp" path="bin" />
 	
