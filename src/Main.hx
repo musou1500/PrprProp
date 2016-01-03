@@ -49,14 +49,14 @@ class Main extends Sprite
 			var color = colors[i];
 			// 上から落とすタイプのジェネレータ
 			var topCenter = new Point(this.stage.stageWidth / 2, 0);
-			var generator = new AppleGenerator(topCenter, color, 15000);
+			var generator = new AppleGenerator(topCenter, color, 13000);
 			generator.addEventListener(AppleGeneratorEvent.APPLE_GENERATE, function(e:AppleGeneratorEvent) {
 				var apple = e.apple;
 				apple.x = this.stage.stageWidth / 2;
 				apple.y = 0 - e.radius;
-				apple.speedX = 0.5 - (i % 2 * 1);
+				apple.speedX = 0.8 - (i % 2 * 1.6);
 				apple.speedY = 1.5;
-				apple.springs[0].source.applyForce(new Vector3D(500*Math.random() - 250, 20*Math.random() - 10, 0));
+				apple.springs[0].source.applyForce(new Vector3D(50 * Math.random() + 200, 20 * Math.random() - 10, 0));
 				this.apples.push(apple);
 				this.stage.addChild(apple);
 			});
@@ -68,20 +68,20 @@ class Main extends Sprite
 			if (i % 2 == 1) {
 				sidePoint.x = this.stage.stageWidth;
 			}
-			var subGenerator = new AppleGenerator(sidePoint, color, 15000);
+			var subGenerator = new AppleGenerator(sidePoint, color, 13000);
 			subGenerator.addEventListener(AppleGeneratorEvent.APPLE_GENERATE, function(e:AppleGeneratorEvent) {
 				var apple = e.apple;
 				apple.y = subGenerator.point.y;
 				if (i % 2 == 0) {
 					apple.x = 0 - e.radius;
-					apple.speedX = 1;
+					apple.speedX = 1.2;
 				} else {
 					apple.x = this.stage.stageWidth + e.radius;
-					apple.speedX = 0 - 1;
+					apple.speedX = 0 - 1.2;
 				}
 
 				apple.speedY = 1.0;
-				apple.springs[0].source.applyForce(new Vector3D(500*Math.random() - 250, 20*Math.random() - 10, 0));
+				apple.springs[0].source.applyForce(new Vector3D(50*Math.random() + 200, 20 * Math.random() - 10, 0));
 				this.apples.push(apple);
 				this.stage.addChild(apple);
 			});

@@ -27,7 +27,7 @@ class AppleGenerator extends EventDispatcher
 	public function start()
 	{
 		this.generate();
-		this.timer = new Timer(this.interval + Math.random() * 3000, 0);
+		this.timer = new Timer(this.interval + Math.random() * 5000, 0);
 		timer.addEventListener(TimerEvent.TIMER, function(e:TimerEvent) {
 			this.generate();
 		});
@@ -45,8 +45,8 @@ class AppleGenerator extends EventDispatcher
 	
 	public function generate()
 	{
-		var radius = 250 - Std.random(50);
-		var apple = new FallenApple(color, FallenApple.genRandomPoints(5, radius));
+		var radius = 170 + Std.random(50);
+		var apple = new FallenApple(color, FallenApple.genRandomPoints(6, radius));
 		apple.x = this.point.x;
 		apple.y = this.point.y;
 
