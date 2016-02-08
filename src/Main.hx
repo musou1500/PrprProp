@@ -54,39 +54,15 @@ class Main extends Sprite
 				var apple = e.apple;
 				apple.x = this.stage.stageWidth / 2;
 				apple.y = 0 - e.radius;
-				apple.speedX = 0.8 - (i % 2 * 1.6);
+				apple.speedX = 0.8 - (i % 2 * 1.2);
 				apple.speedY = 1.5;
-				apple.springs[0].source.applyForce(new Vector3D(50 * Math.random() + 200, 20 * Math.random() - 10, 0));
+				apple.springs[0].source.applyForce(new Vector3D(20 * Math.random() +80, 20 * Math.random()+80, 0));
 				this.apples.push(apple);
 				this.stage.addChild(apple);
 			});
 			generator.start();
 			this.generators.push(generator);
 
-			// 横から流す感じのジェネレータ
-			var sidePoint:Point = new Point(0, 100);
-			if (i % 2 == 1) {
-				sidePoint.x = this.stage.stageWidth;
-			}
-			var subGenerator = new AppleGenerator(sidePoint, color, 13000);
-			subGenerator.addEventListener(AppleGeneratorEvent.APPLE_GENERATE, function(e:AppleGeneratorEvent) {
-				var apple = e.apple;
-				apple.y = subGenerator.point.y;
-				if (i % 2 == 0) {
-					apple.x = 0 - e.radius;
-					apple.speedX = 1.2;
-				} else {
-					apple.x = this.stage.stageWidth + e.radius;
-					apple.speedX = 0 - 1.2;
-				}
-
-				apple.speedY = 1.0;
-				apple.springs[0].source.applyForce(new Vector3D(50*Math.random() + 200, 20 * Math.random() - 10, 0));
-				this.apples.push(apple);
-				this.stage.addChild(apple);
-			});
-			subGenerator.start();
-			this.generators.push(subGenerator);
 		}
 
 		this.stage.addChild(new FPS());

@@ -9,7 +9,7 @@
 	<!-- output -->
 	<app main="Main" file="PrprProp" path="bin" />
 	
-	<window background="#FCFCFC" fps="30" fullscreen="true" hardware="false" />
+	<window background="#FCFCFC" fps="30" fullscreen="false" hardware="false" />
 	<window width="800" height="600" unless="mobile" />
 	<window orientation="landscape" vsync="false" antialiasing="0" if="cpp" />
 	
